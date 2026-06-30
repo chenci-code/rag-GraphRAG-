@@ -2,22 +2,21 @@
 completion_models:
   default_completion_model:
     model_provider: openai
-    api_base: https://api.deepseek.com/v1   # 🔗 直连你充了钱的 DeepSeek 官方原生接口
-    model: deepseek-chat                    # 🤖 使用旗舰级的 DeepSeek-V3 帮你狂抽图谱和关键词描述
+    api_base: https://api.deepseek.com/v1   
+    model: deepseek-chat                    
     auth_method: api_key
-    api_key: ${DEEPSEEK_API_KEY}            # 🔒 安全读取 .env
-    concurrent_requests: 4                  # DeepSeek 官方并发支持很好
+    api_key: ${DEEPSEEK_API_KEY}            
+    concurrent_requests: 4                  
     retry:
       type: exponential_backoff
 
 embedding_models:
   default_embedding_model:
     model_provider: openai
-    api_base: https://dashscope.aliyuncs.com/compatible-mode/v1 # 🔗 指向你的阿里云百炼接口
-    model: text-embedding-v3               # 👁️ 阿里百炼王牌向量模型
+    api_base: https://dashscope.aliyuncs.com/compatible-mode/v1 
+    model: text-embedding-v3               
     auth_method: api_key
-    api_key: ${DASHSCOPE_API_KEY}           # 🔒 安全读取 .env 里的百炼密钥
-    # 🌟🌟 核心降维打击：强行把发给百炼的包裹掐成 1 条，彻底终结 400 报错！
+    api_key: ${DASHSCOPE_API_KEY}           
     batch_size: 1
     concurrent_requests: 1
     retry:
