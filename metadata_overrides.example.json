@@ -1,0 +1,41 @@
+{
+  "documents": {
+    "doc1_pangu_rd_plan.txt": {
+      "department_id": "rd_center",
+      "visibility": "department",
+      "keywords": ["盘古AI大模型2.0", "研发路线图", "512K", "张岚", "800万尾款"],
+      "tags": ["研发中心", "盘古项目"]
+    },
+    "doc2_sales_starfire_q2.txt": {
+      "department_id": "sales_dept",
+      "visibility": "department",
+      "keywords": ["星火销售团队", "北方能源集团", "2500万意向合同", "高海波"],
+      "tags": ["销售部", "客户拓展"]
+    },
+    "doc3_finance_audit_rules.txt": {
+      "department_id": "finance_control",
+      "visibility": "department",
+      "keywords": ["差旅报销", "内控合规", "500元住宿红线", "张岚"],
+      "tags": ["财务内控部", "审计规则"]
+    },
+    "doc4_sales_beijing_trip.txt": {
+      "department_id": "business_travel",
+      "visibility": "department",
+      "keywords": ["北京出差", "李伟", "五星级酒店", "12万单据", "差旅报销"],
+      "tags": ["商务差旅组", "销售支持"]
+    },
+    "doc5_finance_conflict_report.txt": {
+      "department_id": "compliance_audit",
+      "visibility": "department",
+      "keywords": ["合规警告", "虚假挂靠", "EXP-202605-089", "800万尾款", "硬熔断"],
+      "tags": ["合规审计组", "风险控制"]
+    },
+    "doc6_pangu_mid_review.txt": {
+      "department_id": "pmo",
+      "visibility": "department",
+      "keywords": ["中期内审", "陆明", "对齐损失率0.015%", "专家联合调试费", "项目协调"],
+      "tags": ["项目管理办公室", "盘古项目"]
+    }
+  },
+  "text_units": {}
+}

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GraphRAG 客服工作台</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/ui/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>智能客服工作台</h1>
+          <p id="systemSummary">正在连接本地服务...</p>
+        </div>
+        <nav class="view-switch" aria-label="工作区">
+          <button class="view-tab active" data-view="chat">客服端</button>
+          <button class="view-tab" data-view="admin">管理员端</button>
+        </nav>
+      </header>
+
+      <main id="chatView" class="view-panel">
+        <section class="chat-shell">
+          <div class="chat-main">
+            <div class="panel-header">
+              <div>
+                <h2>对话回复</h2>
+                <p>面向客服人员的主要回复界面</p>
+              </div>
+              <span id="queryStatus" class="status-pill">待查询</span>
+            </div>
+
+            <label class="field-label" for="questionInput">用户问题</label>
+            <textarea
+              id="questionInput"
+              rows="5"
+              placeholder="输入客户问题，例如：盘古项目当前有哪些风险？"
+            ></textarea>
+
+            <div class="chat-meta-grid">
+              <label>
+                <span>租户</span>
+                <input id="tenantInput" value="default" />
+              </label>
+              <label>
+                <span>对话</span>
+                <input id="conversationInput" placeholder="例如 conv_001" />
+              </label>
+              <label>
+                <span>部门</span>
+                <input id="departmentInput" placeholder="可选" />
+              </label>
+            </div>
+
+            <div class="query-actions">
+              <button class="primary-button" id="askButton">生成回复</button>
+              <button class="ghost-button" id="clearButton">清空</button>
+            </div>
+
+            <section class="answer-section">
+              <div class="panel-header compact">
+                <h2>AI 整理后的回复</h2>
+              </div>
+              <article id="answerOutput" class="answer-output">输入问题后，答案会显示在这里。</article>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <main id="adminView" class="view-panel hidden">
+        <section class="admin-layout">
+          <div class="admin-main">
+            <section class="admin-section">
+              <div class="panel-header compact">
+                <h2>知识文件</h2>
+                <button class="ghost-button small" id="refreshFilesButton">刷新</button>
+              </div>
+              <div class="upload-row">
+                <input id="fileInput" type="file" />
+                <button id="previewUploadButton">预览</button>
+                <button id="uploadButton">上传</button>
+              </div>
+              <p class="helper-text">支持 CSV、Excel、Word、PDF、Markdown；上传后会自动识别、转换、切分并重建索引。</p>
+              <label class="checkbox-line">
+                <input id="overwriteToggle" type="checkbox" />
+                <span>覆盖同名文件</span>
+              </label>
+              <div id="fileList" class="file-list"></div>
+            </section>
+
+            <section class="admin-section">
+              <div class="panel-header compact">
+                <h2>写入文本</h2>
+              </div>
+              <input id="newFilenameInput" placeholder="example.md" />
+              <textarea id="newFileContentInput" rows="5" placeholder="直接写入知识库的 Markdown 或文本内容"></textarea>
+              <div class="query-actions">
+                <button id="createTextButton">保存文本</button>
+                <label class="checkbox-line inline">
+                  <input id="textOverwriteToggle" type="checkbox" />
+                  <span>覆盖</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="evidence-pane">
+              <div class="tabs" role="tablist" aria-label="调试上下文">
+                <button class="tab active" data-tab="sources">Chunks</button>
+                <button class="tab" data-tab="graph">Graph</button>
+                <button class="tab" data-tab="raw">Raw</button>
+              </div>
+              <div id="sourcesTab" class="tab-panel"></div>
+              <div id="graphTab" class="tab-panel hidden"></div>
+              <pre id="rawTab" class="tab-panel hidden"></pre>
+            </section>
+          </div>
+
+          <aside class="admin-side">
+            <section class="admin-section stats-section">
+              <div class="panel-header compact">
+                <h2>系统状态</h2>
+                <span id="healthStatus" class="status-pill">检查中</span>
+              </div>
+              <div id="statsGrid" class="stats-grid"></div>
+            </section>
+
+            <section class="admin-section">
+              <div class="panel-header compact">
+                <h2>索引维护</h2>
+              </div>
+              <div class="maintenance-actions">
+                <button class="icon-button" id="reloadButton" title="重新加载索引" aria-label="重新加载索引">
+                  <span aria-hidden="true">↻</span>
+                </button>
+                <button class="primary-button" id="rebuildButton">重建索引</button>
+              </div>
+            </section>
+
+            <section class="admin-section advanced-section">
+              <div class="panel-header compact">
+                <h2>检索调试</h2>
+              </div>
+              <label>
+                <span>模式</span>
+                <select id="methodSelect" aria-label="检索模式">
+                  <option value="hybrid">hybrid</option>
+                  <option value="local">local</option>
+                  <option value="global">global</option>
+                  <option value="basic">basic</option>
+                  <option value="drift">drift</option>
+                </select>
+              </label>
+              <div class="controls-grid compact-grid">
+                <label>
+                  <span>Top K</span>
+                  <input id="topKInput" type="number" min="1" max="50" value="5" />
+                </label>
+                <label>
+                  <span>Graph K</span>
+                  <input id="graphKInput" type="number" min="1" max="100" value="8" />
+                </label>
+              </div>
+              <div class="switch-row stacked">
+                <label>
+                  <input id="permissionToggle" type="checkbox" />
+                  <span>启用权限过滤</span>
+                </label>
+                <label>
+                  <input id="contextToggle" type="checkbox" checked />
+                  <span>返回调试上下文</span>
+                </label>
+              </div>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/ui/app.js"></script>
+  </body>
+</html>
